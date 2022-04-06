@@ -67,16 +67,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\css\bootstrap.css" />
+    <Content Include="css\bootstrap.css" />
+    <Content Include="css\style.css" />
     <Content Include="App_Data\DBCarrello.mdf" />
     <Content Include="App_Data\DBCarrello_log.ldf">
       <DependentUpon>DBCarrello.mdf</DependentUpon>
     </Content>
-    <Content Include="App_Data\js\bootstrap.js" />
+    <Content Include="Home.aspx" />
+    <Content Include="iscrizione.aspx" />
+    <Content Include="js\bootstrap.js" />
     <Content Include="default.aspx" />
+    <Content Include="js\jquery.js" />
+    <Content Include="paginaErrore.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="adoNet_sqlServer.cs" />
     <Compile Include="default.aspx.cs">
       <DependentUpon>default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -84,11 +90,32 @@
     <Compile Include="default.aspx.designer.cs">
       <DependentUpon>default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Home.aspx.cs">
+      <DependentUpon>Home.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Home.aspx.designer.cs">
+      <DependentUpon>Home.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="iscrizione.aspx.cs">
+      <DependentUpon>iscrizione.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="iscrizione.aspx.designer.cs">
+      <DependentUpon>iscrizione.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paginaErrore.aspx.cs">
+      <DependentUpon>paginaErrore.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paginaErrore.aspx.designer.cs">
+      <DependentUpon>paginaErrore.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\css\bootstrap.css.map" />
-    <Content Include="App_Data\js\bootstrap.js.map" />
+    <Content Include="css\bootstrap.css.map" />
+    <Content Include="js\bootstrap.js.map" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
