@@ -33,6 +33,15 @@ namespace CarrelloASP_NET
         protected global::System.Web.UI.WebControls.HyperLink lblNavBrand;
 
         /// <summary>
+        /// Controllo btnHome.
+        /// </summary>
+        /// <remarks>
+        /// Campo generato automaticamente.
+        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnHome;
+
+        /// <summary>
         /// Controllo phElencoCategorie.
         /// </summary>
         /// <remarks>
@@ -42,21 +51,30 @@ namespace CarrelloASP_NET
         protected global::System.Web.UI.WebControls.PlaceHolder phElencoCategorie;
 
         /// <summary>
-        /// Controllo txtSearch.
+        /// Controllo btnLogout.
         /// </summary>
         /// <remarks>
         /// Campo generato automaticamente.
         /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSearch;
+        protected global::System.Web.UI.WebControls.Button btnLogout;
 
         /// <summary>
-        /// Controllo btnSearch.
+        /// Controllo btnCart.
         /// </summary>
         /// <remarks>
         /// Campo generato automaticamente.
         /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSearch;
+        protected global::System.Web.UI.WebControls.Button btnCart;
+
+        /// <summary>
+        /// Controllo container.
+        /// </summary>
+        /// <remarks>
+        /// Campo generato automaticamente.
+        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder container;
     }
 }

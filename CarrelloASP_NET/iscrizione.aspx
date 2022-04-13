@@ -8,6 +8,14 @@
     <title>Iscrizione CarrelloASP</title>
     <link rel="stylesheet" href="css/bootstrap.css" />
     <script type="text/javascript" src="js/bootstrap.js"></script>
+    <style>
+       body{
+            -webkit-user-select: none; /* Safari */        
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+       }
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">

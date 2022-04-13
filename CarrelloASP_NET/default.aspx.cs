@@ -54,6 +54,7 @@ namespace CarrelloASP_NET
                                     Response.Redirect("FornitoreView.aspx");
                                     break;
                                 case "USR":
+                                    Session["page"] = 0;
                                     Response.Redirect("Home.aspx");
                                     break;
                             }

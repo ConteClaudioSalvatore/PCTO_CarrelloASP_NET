@@ -35,7 +35,10 @@ namespace CarrelloASP_NET
 
         protected void btnContinua_Click(object sender, EventArgs e)
         {
-            Response.Redirect("default.aspx");
+            if (Request.QueryString["codErr"] != null && Request.QueryString["codErr"] == "2")
+                Response.Redirect("Home.aspx");
+            else
+                Response.Redirect("default.aspx");
         }
     }
 }

@@ -22,6 +22,8 @@ namespace CarrelloASP_NET
 
         protected void txtUsername_TextChanged(object sender, EventArgs e)
         {
+            txtPassword.Attributes["value"] = txtPassword.Text;
+            txtConfermaPassword.Attributes["value"] = txtConfermaPassword.Text;
             sqlConnection = new adoNet();
             sqlConnection.cmd.Parameters.AddWithValue("@username", txtUsername.Text);
             if (txtUsername.Text != string.Empty)
@@ -45,6 +47,8 @@ namespace CarrelloASP_NET
 
         protected void txtMail_TextChanged(object sender, EventArgs e)
         {
+            txtPassword.Attributes["value"] = txtPassword.Text;
+            txtConfermaPassword.Attributes["value"] = txtConfermaPassword.Text;
             sqlConnection = new adoNet();
             sqlConnection.cmd.Parameters.AddWithValue("@mail", txtMail.Text);
             if (txtMail.Text != string.Empty)
@@ -98,7 +102,8 @@ namespace CarrelloASP_NET
 
         private bool controllaCampi()
         {
-
+            txtPassword.Attributes["value"] = txtPassword.Text;
+            txtConfermaPassword.Attributes["value"] = txtConfermaPassword.Text;
             if (txtUsername.Text != string.Empty)
             {
                 sqlConnection = new adoNet();
