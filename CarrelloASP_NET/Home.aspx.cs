@@ -102,13 +102,14 @@ namespace CarrelloASP_NET
         private void caricaProdotti()
         {
             dbConnection = new adoNet();
-            DataTable prodotti = dbConnection.eseguiQuery("SELECT * FROM Prodotti", CommandType.Text);
+            DataTable prodotti = dbConnection.eseguiQuery("SELECT * FROM Prodotti where Valido=1", CommandType.Text);
             generaCarte(prodotti);
         }
         private void caricaProdotti(int categoria)
         {
             dbConnection = new adoNet();
-            DataTable prodotti = dbConnection.eseguiQuery("SELECT * FROM Prodotti WHERE Categoria = " + categoria, CommandType.Text);
+            dbConnection.cmd.Parameters.AddWithValue("@categoria", categoria);
+            DataTable prodotti = dbConnection.eseguiQuery("SELECT * FROM Prodotti WHERE Categoria = @categoria and Valido=1", CommandType.Text);
             generaCarte(prodotti);
         }
         private void generaCarte(DataTable prodotti)
@@ -589,7 +590,7 @@ namespace CarrelloASP_NET
                         <br>
                         <br>
                         Il tuo ordine è stato effettuato con <span style='color: #0a0'>successo</span>.
-                        <br>  
+                        <br>
                         <br>
                         Hai speso <strong>{dbConnection.eseguiScalar(
                             "SELECT SUM(p.Prezzo * c.Quantita) FROM Carrello as c inner join Prodotti as p on c.IdProdotto=p.Id WHERE IdAccount = @idAccount",
@@ -617,11 +618,111 @@ namespace CarrelloASP_NET
                     dbConnection.eseguiNonQuery(@"delete from Carrello where IdAccount = @idAccount", CommandType.Text);
                     Session["page"] = 1;
                 }
-                catch (Exception ex)
+                catch 
                 {
                     Response.Redirect("paginaErrore.aspx?codErr=2");
                 }
                 Response.Redirect("Home.aspx");
+            }
+        }
+        #endregion
+        #region cronologiaOrdini
+        protected void btnCronologiaOrdini_Click(object sender, EventArgs e)
+        {
+            Session["page"] = 3;
+            caricaCronologiaOrdini();
+        }
+        private void caricaCronologiaOrdini()
+        {
+            if (Session["account"] is DataRow account)
+            {
+                dbConnection = new adoNet();
+                dbConnection.cmd.Parameters.AddWithValue("@idAccount", account["Id"]);
+                DataTable ordini = dbConnection.eseguiQuery(@"select p.NomeProdotto as Prodotto, c.Quantita as Quantita, c.DataAcquisto as DataAcquisto, p.Prezzo, p.Immagine
+                                                            from StoricoOrdini as c inner join Prodotti as p on c.Prodotto=p.Id
+                                                            where c.Account = @idAccount
+                                                            order by c.DataAcquisto desc",
+                                                            CommandType.Text);
+                if (ordini.Rows.Count > 0)
+                {
+                    container.Controls.Clear();
+                    DateTime dataPrec = new DateTime();
+                    HtmlGenericControl rowPerDate = new HtmlGenericControl("div");
+                    decimal totale = 0;
+                    HtmlGenericControl row = new HtmlGenericControl("div");
+                    HtmlGenericControl totLbl;
+                    foreach (DataRow ordine in ordini.Rows)
+                    {
+                        if (((DateTime)ordine["DataAcquisto"]).Date != dataPrec)
+                        {
+                            if(totale>0)
+                            {
+                                totLbl = new HtmlGenericControl("h5");
+                                totLbl.Style.Add("text-align", "center");
+                                totLbl.Attributes.Add("class", "my-3");
+                                totLbl.InnerText = $"Totale: {totale} €";
+                                row.Controls.Add(totLbl);
+                            }
+                            rowPerDate = new HtmlGenericControl("div");
+                            rowPerDate.Attributes.Add("class", "row m-5");
+                            rowPerDate.Attributes.Add("style", "border: 1px solid #ccc; border-radius: 5px; margin: min-content;");
+                            container.Controls.Add(rowPerDate);
+                            HtmlGenericControl h4 = new HtmlGenericControl("h4")
+                            {
+                                InnerText = $"Data di acquisto: {(DateTime)ordine["DataAcquisto"]:dd/MM/yyyy}"
+                            };
+                            h4.Style.Add("text-align", "center");
+                            h4.Attributes.Add("class", "m-5");
+                            totale = 0;
+                            rowPerDate.Controls.Add(h4);
+                        }
+                        row = new HtmlGenericControl("div");
+                        row.Attributes.Add("class", "row");
+                        rowPerDate.Controls.Add(row);
+                        HtmlGenericControl div = new HtmlGenericControl("div");
+                        div.Attributes.Add("class", "col-12");
+                        row.Controls.Add(div);
+                        HtmlGenericControl card = new HtmlGenericControl("div");
+                        card.Attributes.Add("class", "card my-1 mx-5");
+                        div.Controls.Add(card);
+                        HtmlGenericControl cardBody = new HtmlGenericControl("div");
+                        cardBody.Attributes.Add("class", "card-body");
+                        card.Controls.Add(cardBody);
+                        HtmlGenericControl image = new HtmlGenericControl("img");
+                        image.Attributes.Add("class", "img mr-4");
+                        image.Style.Add("width", "9rem");
+                        image.Style.Add("float", "left");
+                        image.Style.Add("border-radius", "1rem");
+                        image.Attributes.Add("src", $"{ordine["Immagine"]}");
+                        cardBody.Controls.Add(image);
+                        HtmlGenericControl cardTitle = new HtmlGenericControl("h5");
+                        cardTitle.Attributes.Add("class", "card-title");
+                        cardTitle.InnerText = ordine["Prodotto"].ToString();
+                        cardBody.Controls.Add(cardTitle);
+                        HtmlGenericControl cardText = new HtmlGenericControl("p");
+                        cardText.Attributes.Add("class", "card-text");
+                        cardText.InnerHtml = $@"Quantità: {ordine["Quantita"]} 
+                                                <br>
+                                                Costo: <strong>{(int)ordine["Quantita"] * (decimal)ordine["Prezzo"]} €</strong>";
+                        cardBody.Controls.Add(cardText);
+                        totale += (int)ordine["Quantita"] * (decimal)ordine["Prezzo"];
+
+                        dataPrec = ((DateTime)ordine["DataAcquisto"]).Date;
+                    }
+                    totLbl = new HtmlGenericControl("h5");
+                    totLbl.Style.Add("text-align", "center");
+                    totLbl.Attributes.Add("class", "my-3");
+                    totLbl.InnerText = $"Totale: {totale} €";
+                    row.Controls.Add(totLbl);
+                }
+                else
+                {
+                    container.Controls.Clear();
+                    HtmlGenericControl div = new HtmlGenericControl("div");
+                    div.Attributes.Add("class", "alert alert-info text-center");
+                    div.InnerText = "Non hai ancora effettuato ordini";
+                    container.Controls.Add(div);
+                }
             }
         }
         #endregion

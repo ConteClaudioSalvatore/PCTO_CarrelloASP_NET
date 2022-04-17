@@ -28,7 +28,10 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <asp:Button ID="btnHome" runat="server" class="nav-link active btn btn-outline" BorderStyle="None" aria-current="page" href="#" Text="Home" OnClick="btnHome_Click" />
+                            <asp:Button ID="btnHome" runat="server" CssClass="nav-link active btn btn-outline" Text="Home" OnClick="btnHome_Click" />
+                        </li>
+                        <li class="nav-item">
+                            <asp:Button ID="btnLogout" CssClass="btn btn-outline-danger" Text="Esci" runat="server" OnClick="btnLogout_Click"/>
                         </li>
                     </ul>
                     <div class="d-flex">

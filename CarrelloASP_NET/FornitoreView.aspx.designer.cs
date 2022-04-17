@@ -42,6 +42,15 @@ namespace CarrelloASP_NET
         protected global::System.Web.UI.WebControls.Button btnHome;
 
         /// <summary>
+        /// Controllo btnLogout.
+        /// </summary>
+        /// <remarks>
+        /// Campo generato automaticamente.
+        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnLogout;
+
+        /// <summary>
         /// Controllo btnAggiungiProdotto.
         /// </summary>
         /// <remarks>

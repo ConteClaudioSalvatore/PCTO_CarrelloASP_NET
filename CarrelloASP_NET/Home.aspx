@@ -41,6 +41,9 @@
                         <li class="nav-item">
                             <asp:Button ID="btnLogout" CssClass="btn btn-outline-danger" Text="Esci" runat="server" OnClick="btnLogout_Click"/>
                         </li>
+                        <li class="nav-item">
+                            <asp:Button ID="btnCronologiaOrdini" CssClass="btn btn-outline-primary mx-1" Text="Cronologia Ordini" runat="server" OnClick="btnCronologiaOrdini_Click"/>
+                        </li>
                     </ul>
                     <div class="d-flex">
                         <asp:Button ID="btnCart" CssClass="btn btn-outline-success" Text="Carrello" runat="server" OnClick="btnCart_Click"/>
