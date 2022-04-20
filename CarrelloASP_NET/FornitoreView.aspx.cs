@@ -88,7 +88,6 @@ namespace CarrelloASP_NET
                             th.Attributes.Add("class", "text-center");
                             tr.Controls.Add(th);
                         }
-
                     }
                     th = new HtmlGenericControl("th")
                     {
@@ -310,9 +309,10 @@ namespace CarrelloASP_NET
             {
                 ID = "txtPrezzo",
                 CssClass = "form-control",
-                TextMode = TextBoxMode.Number,
                 Text = "0.00"
             };
+            prezzo.AutoPostBack = true;
+            prezzo.TextChanged += new EventHandler(txtPrezzo_TextChanged);
             formLabel.Controls.Add(prezzo);
             //descrizione
             formOutline = new HtmlGenericControl("div");
@@ -350,6 +350,35 @@ namespace CarrelloASP_NET
                 CssClass = "text-danger"
             };
             formButton.Controls.Add(lblErrore);
+        }
+        protected void txtPrezzo_TextChanged(object sender, EventArgs e)
+        {
+            TextBox txtPrezzo = (TextBox)sender;
+            if (decimal.TryParse(txtPrezzo.Text, out decimal prezzo) || txtPrezzo.Text == string.Empty)
+            {
+                txtPrezzo.Style.Remove("border-color");
+                txtPrezzo.Text = prezzo.ToString("0.00");
+                if (txtPrezzo.Text.Length > 0)
+                {
+                    if (txtPrezzo.Text.Contains(","))
+                    {
+                        txtPrezzo.Text = txtPrezzo.Text.Replace(",", ".");
+                    }
+                    if (!txtPrezzo.Text.Contains("."))
+                    {
+                        txtPrezzo.Text += ".00";
+                    }
+                    else if (txtPrezzo.Text.Split('.')[1].Length == 1)
+                    {
+                        txtPrezzo.Text += "0";
+                    }
+                }
+            }
+            else
+            {
+                txtPrezzo.Style.Add("border-color", "red");
+            }
+            
         }
         protected void confermaProdotto_Click(object sender, EventArgs e)
         {
@@ -436,6 +465,17 @@ namespace CarrelloASP_NET
         }
         #endregion
 
-        
+        #region statisticheProdotti
+        protected void btnStatisctiche_Click(object sender, EventArgs e)
+        {
+            caricaStatistiche();
+            
+        }
+        private void caricaStatistiche()
+        {
+            dbConnection = new adoNet();
+            
+        }
+        #endregion
     }
 }

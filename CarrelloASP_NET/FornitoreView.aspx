@@ -33,6 +33,9 @@
                         <li class="nav-item">
                             <asp:Button ID="btnLogout" CssClass="btn btn-outline-danger" Text="Esci" runat="server" OnClick="btnLogout_Click"/>
                         </li>
+                        <li class="nav-item">
+                            <asp:Button ID="btnStatisctiche" CssClass="btn btn-outline-primary" Text="Statistiche Prodotti" runat="server" OnClick="btnStatisctiche_Click"/>
+                        </li>
                     </ul>
                     <div class="d-flex">
                         <asp:Button ID="btnAggiungiProdotto" CssClass="btn btn-outline-success" Text="Aggiungi Prodotto" runat="server" OnClick="btnAggiungiProdotto_Click" />
