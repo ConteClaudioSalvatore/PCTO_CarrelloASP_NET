@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.UI.DataVisualization.Charting;
 using System.Web.UI.HtmlControls;
 using System.Data;
 using adoNetWebSQlServer;
@@ -354,7 +355,7 @@ namespace CarrelloASP_NET
         protected void txtPrezzo_TextChanged(object sender, EventArgs e)
         {
             TextBox txtPrezzo = (TextBox)sender;
-            if (decimal.TryParse(txtPrezzo.Text, out decimal prezzo) || txtPrezzo.Text == string.Empty)
+            if (decimal.TryParse(txtPrezzo.Text.Replace(".", ","), out decimal prezzo) || txtPrezzo.Text == string.Empty)
             {
                 txtPrezzo.Style.Remove("border-color");
                 txtPrezzo.Text = prezzo.ToString("0.00");
@@ -367,10 +368,6 @@ namespace CarrelloASP_NET
                     if (!txtPrezzo.Text.Contains("."))
                     {
                         txtPrezzo.Text += ".00";
-                    }
-                    else if (txtPrezzo.Text.Split('.')[1].Length == 1)
-                    {
-                        txtPrezzo.Text += "0";
                     }
                 }
             }
@@ -408,7 +405,7 @@ namespace CarrelloASP_NET
                     idFornitore);
                 dbConnection.cmd.Parameters.AddWithValue(
                     "@immagine",
-                    ((FileUpload)this.FindControl("imagePicker")).FileName);
+                    "img/" + ((FileUpload)this.FindControl("imagePicker")).FileName);
                 if (Session["modifica"] != null && (bool)Session["modifica"])
                 {
                     dbConnection.cmd.Parameters.AddWithValue("@idProdotto", Convert.ToInt32(Session["idProdotto"]));
@@ -431,7 +428,7 @@ namespace CarrelloASP_NET
                         CommandType.Text);
                 }
                 Session["page"] = 0;
-                Response.Redirect("FornitoreView.aspx");
+                caricaHome();
             }
         }
         private bool controllaCampi()
@@ -469,12 +466,12 @@ namespace CarrelloASP_NET
         protected void btnStatisctiche_Click(object sender, EventArgs e)
         {
             caricaStatistiche();
-            
         }
         private void caricaStatistiche()
         {
             dbConnection = new adoNet();
-            
+            container.Controls.Clear();
+            //creo il grafico delle vendite dei prodotti
         }
         #endregion
     }

@@ -1,5 +1,7 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="FornitoreView.aspx.cs" Inherits="CarrelloASP_NET.FornitoreView" %>
 
+<%@ Register assembly="System.Web.DataVisualization, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" namespace="System.Web.UI.DataVisualization.Charting" tagprefix="asp" %>
+
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -34,7 +36,7 @@
                             <asp:Button ID="btnLogout" CssClass="btn btn-outline-danger" Text="Esci" runat="server" OnClick="btnLogout_Click"/>
                         </li>
                         <li class="nav-item">
-                            <asp:Button ID="btnStatisctiche" CssClass="btn btn-outline-primary" Text="Statistiche Prodotti" runat="server" OnClick="btnStatisctiche_Click"/>
+                            <asp:Button ID="btnStatisctiche" CssClass="btn btn-outline-primary mx-2" Text="Statistiche Prodotti" runat="server" OnClick="btnStatisctiche_Click"/>
                         </li>
                     </ul>
                     <div class="d-flex">
