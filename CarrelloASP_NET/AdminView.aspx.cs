@@ -714,6 +714,7 @@ namespace CarrelloASP_NET
                 };
                 img.Attributes.Add("style", "height:100px");
                 td.Controls.Add(img);
+                //actions
                 td = new HtmlGenericControl("td");
                 tr.Controls.Add(td);
                 HtmlGenericControl btnGroup = new HtmlGenericControl("div");
@@ -764,7 +765,6 @@ namespace CarrelloASP_NET
                 @"update Prodotti set Valido = 1 - Valido where Id = @id",
                 CommandType.Text
             );
-            Session["page"] = 2;
             Session["inModProdotto"] = null;
             caricaGestioneProdotti();
         }
@@ -797,6 +797,7 @@ namespace CarrelloASP_NET
                 ID = "txtNomeProdotto"
             };
             formTextInput.Text = prodotto["NomeProdotto"].ToString();
+            formOutline.Controls.Add(formTextInput);
             //immagine (solo visualizzazione)
             formOutline = new HtmlGenericControl("div");
             formOutline.Attributes.Add("class", "form-outline");
@@ -808,12 +809,12 @@ namespace CarrelloASP_NET
             Image formImage = new Image
             {
                 CssClass = "form-control img-thumbnail",
-                ID = "imgImmagine"
+                ID = "imgProdotto",
             };
-            formImage.ImageUrl = Server.MapPath(prodotto["Immagine"].ToString());
+            //formImage.Attributes.Add("style", "height:100px");
+            formImage.ImageUrl = prodotto["Immagine"].ToString();
             formOutline.Controls.Add(formImage);
             //categoria
-            formOutline.Controls.Add(formTextInput);
             formOutline = new HtmlGenericControl("div");
             formOutline.Attributes.Add("class", "form-outline");
             formCardBody.Controls.Add(formOutline);
@@ -874,6 +875,7 @@ namespace CarrelloASP_NET
                 CssClass = "form-control",
                 ID = "txtPrezzo"
             };
+            formTextInputPrezzo.AutoPostBack = true;
             formTextInputPrezzo.TextChanged += new EventHandler(txtPrezzo_TextChanged);
             formTextInputPrezzo.Text = Convert.ToDecimal(prodotto["Prezzo"]).ToString("0.00");
             formOutline.Controls.Add(formTextInputPrezzo);
@@ -895,11 +897,11 @@ namespace CarrelloASP_NET
             formOutline.Controls.Add(formTextInputDescrizione);
             //bottone
             HtmlGenericControl formButton = new HtmlGenericControl("div");
-            formButton.Attributes.Add("class", "form-button");
+            formButton.Attributes.Add("class", "d-flex form-button justify-content-center");
             formCardBody.Controls.Add(formButton);
             Button btnModifica = new Button
             {
-                CssClass = "btn btn-primary mt-3",
+                CssClass = "btn btn-primary btn-lg mt-3",
                 ID = "btnModificaProdotto",
                 Text = "Modifica"
             };
@@ -923,13 +925,13 @@ namespace CarrelloASP_NET
                     {
                         new SqlParameter("@nome", ((TextBox)this.FindControl("txtNomeProdotto")).Text),
                         new SqlParameter("@descrizione", ((TextBox)this.FindControl("txtDescrizione")).Text),
-                        new SqlParameter("@prezzo", Convert.ToDecimal(((TextBox)this.FindControl("txtPrezzo")).Text)),
+                        new SqlParameter("@prezzo", Convert.ToDecimal(((TextBox)this.FindControl("txtPrezzo")).Text.Replace('.', ','))),
                         new SqlParameter("@categoria", ((DropDownList)this.FindControl("ddlCategoria")).SelectedValue),
                         new SqlParameter("@id", Convert.ToInt32(Session["inModProdotto"]))
                     });
                 dbConnection.eseguiNonQuery(
                     @"update Prodotti set
-                        Nome = @nome,
+                        NomeProdotto = @nome,
                         Descrizione = @descrizione,
                         Prezzo = @prezzo,
                         Categoria = @categoria

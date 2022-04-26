@@ -159,7 +159,7 @@ namespace CarrelloASP_NET
                     "<br/>" + dbConnection.eseguiScalar("select Descrizione from Fornitori where Id=@idFornitore", CommandType.Text);
                 divCardBody.Controls.Add(p);
                 HtmlGenericControl divCardFooter = new HtmlGenericControl("div");
-                divCardFooter.Attributes.Add("class", "card-footer");
+                divCardFooter.Attributes.Add("class", "card-footer justify-content-center");
                 divCardFooter.Style.Add("border-radius", "5px");
                 divCard.Controls.Add(divCardFooter);
                 Button btnCart = new Button

@@ -29,6 +29,8 @@ namespace CarrelloASP_NET
                 }
                 if (Session["page"] != null && (int)Session["page"] == 1)
                     inserisciNuovoProdotto();
+                else if (Session["page"] != null && (int)Session["page"] == 2)
+                    caricaGraficoProdotti();
                 else
                     caricaHome();
             }
@@ -469,10 +471,89 @@ namespace CarrelloASP_NET
         }
         private void caricaStatistiche()
         {
-            dbConnection = new adoNet();
-            container.Controls.Clear();
-            //creo il grafico delle vendite dei prodotti
+            Session["page"] = 2;
+            caricaGraficoProdotti();
         }
+        private void caricaGraficoProdotti()
+        {
+            container.Controls.Clear();
+            adoNet adoWeb = new adoNet();
+            Series Prodotti = new Series();
+            Series Categorie = new Series();
+
+            foreach (DataRow row in adoWeb.eseguiQuery(
+                  @"select top 3 p.NomeProdotto as nome, sum(o.Quantita) as c
+                    from Prodotti as p, StoricoOrdini as o
+                    where p.Id = o.Prodotto
+                    group by p.NomeProdotto
+                    order by c DESC",
+                  CommandType.Text).Rows)
+            {
+                Prodotti.Points.AddXY(row["nome"].ToString(), Convert.ToInt32(row["c"]));
+            }
+            foreach (DataRow row in adoWeb.eseguiQuery(
+                @"select P.Categoria as Categoria, C.Descrizione as descrizione, sum(o.Quantita) as totVendite
+                  from Prodotti as P, StoricoOrdini as o, Categorie as C
+                  where P.Id = o.Prodotto and P.Categoria = C.Id
+                  group by P.Categoria, C.Descrizione
+                  order by totVendite DESC",
+                CommandType.Text).Rows)
+            {
+                Categorie.Points.AddXY(row["descrizione"].ToString(), Convert.ToInt32(row["totVendite"]));
+            }
+
+            aggiornaGrafico(Prodotti, Categorie);
+        }
+
+        private void aggiornaGrafico(Series datiProdotti, Series datiCategorie)
+        {
+            HtmlGenericControl row = new HtmlGenericControl("div");
+            row.Attributes.Add("class", "row justify-content-center");
+            container.Controls.Add(row);
+            Chart chartProdotti = new Chart();
+            chartProdotti.ID = "chartProdotti";
+            chartProdotti.Width = new Unit(600);
+            chartProdotti.Height = new Unit(400);
+            chartProdotti.CssClass = "col-md-6";
+            row.Controls.Add(chartProdotti);
+            Chart chartCategorie = new Chart();
+            chartCategorie.ID = "chartCategorie";
+            chartCategorie.Width = new Unit(600);
+            chartCategorie.Height = new Unit(400);
+            chartCategorie.CssClass = "col-md-6";
+            row.Controls.Add(chartCategorie);
+            chartProdotti.ChartAreas.Add("Chart Prodotti");
+            chartProdotti.ChartAreas[0].Area3DStyle.Enable3D = false;
+            chartProdotti.Legends.Add("Vendite prodotti");
+            chartProdotti.Titles.Add("I 3 prodotti più venduti");
+
+            chartProdotti.Series.Add(datiProdotti);
+            chartProdotti.Series[0].Name = "Prodotti";
+            chartProdotti.Series[0].IsValueShownAsLabel = true;
+
+            chartProdotti.Series[0].ChartType = SeriesChartType.Bar;
+
+            chartProdotti.ChartAreas[0].AxisX.Title = "Prodotto";
+            chartProdotti.ChartAreas[0].AxisY.Title = "Vendite";
+
+            /***********/
+
+            chartCategorie.ChartAreas.Add("Chart Categorie");
+            chartCategorie.ChartAreas[0].Area3DStyle.Enable3D = false;
+            chartCategorie.Legends.Add("Vendite prodotti");
+            chartCategorie.Titles.Add("Vendite per categoria");
+
+            chartCategorie.Series.Add(datiCategorie);
+            chartCategorie.Series[0].Name = "Categorie";
+            chartCategorie.Series[0].IsValueShownAsLabel = true;
+
+            chartCategorie.Series[0].ChartType = SeriesChartType.Bar;
+
+            chartCategorie.ChartAreas[0].AxisX.Title = "Categorie";
+            chartCategorie.ChartAreas[0].AxisY.Title = "Vendite";
+        }
+
+
         #endregion
     }
 }

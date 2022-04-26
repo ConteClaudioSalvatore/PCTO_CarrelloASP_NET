@@ -28,20 +28,20 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <asp:Button ID="btnHome" runat="server" CssClass="nav-link active btn btn-outline" Text="Home" OnClick="btnHome_Click" />
+                            <asp:Button ID="btnHome" runat="server" CssClass="nav-link active btn btn-outline m-1" Text="Home" OnClick="btnHome_Click" />
                         </li>
                         <li class="nav-item">
-                            <asp:Button ID="btnLogout" CssClass="btn btn-outline-danger" Text="Esci" runat="server" OnClick="btnLogout_Click"/>
+                            <asp:Button ID="btnLogout" CssClass="btn btn-outline-danger m-1" Text="Esci" runat="server" OnClick="btnLogout_Click"/>
                         </li>
                         <li class="nav-item">
-                            <asp:Button ID="btnCategorie" CssClass="btn btn-outline-primary mx-2" Text="Gestisci Categorie" runat="server" OnClick="btnCategorie_Click"/>
+                            <asp:Button ID="btnCategorie" CssClass="btn btn-outline-primary m-1" Text="Gestisci Categorie" runat="server" OnClick="btnCategorie_Click"/>
                         </li>
                         <li class="nav-item">
-                            <asp:Button ID="btnProdotti" CssClass="btn btn-outline-primary mx-2" Text="Gestisci Prodotti" runat="server" OnClick="btnProdotti_Click"/>
+                            <asp:Button ID="btnProdotti" CssClass="btn btn-outline-primary m-1" Text="Gestisci Prodotti" runat="server" OnClick="btnProdotti_Click"/>
                         </li>
                     </ul>
                     <div class="d-flex">
-                        <asp:Button ID="btnAggiungiFornitori" CssClass="btn btn-outline-success" Text="Aggiungi Fornitori" runat="server" OnClick="btnAggiungiFornitore_Click" />
+                        <asp:Button ID="btnAggiungiFornitori" CssClass="btn btn-outline-success m-1" Text="Aggiungi Fornitori" runat="server" OnClick="btnAggiungiFornitore_Click" />
                     </div>
                 </div>
             </div>
