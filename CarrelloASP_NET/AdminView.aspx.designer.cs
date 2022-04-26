@@ -60,6 +60,15 @@ namespace CarrelloASP_NET
         protected global::System.Web.UI.WebControls.Button btnCategorie;
 
         /// <summary>
+        /// Controllo btnProdotti.
+        /// </summary>
+        /// <remarks>
+        /// Campo generato automaticamente.
+        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnProdotti;
+
+        /// <summary>
         /// Controllo btnAggiungiFornitori.
         /// </summary>
         /// <remarks>

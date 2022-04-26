@@ -36,6 +36,9 @@
                         <li class="nav-item">
                             <asp:Button ID="btnCategorie" CssClass="btn btn-outline-primary mx-2" Text="Gestisci Categorie" runat="server" OnClick="btnCategorie_Click"/>
                         </li>
+                        <li class="nav-item">
+                            <asp:Button ID="btnProdotti" CssClass="btn btn-outline-primary mx-2" Text="Gestisci Prodotti" runat="server" OnClick="btnProdotti_Click"/>
+                        </li>
                     </ul>
                     <div class="d-flex">
                         <asp:Button ID="btnAggiungiFornitori" CssClass="btn btn-outline-success" Text="Aggiungi Fornitori" runat="server" OnClick="btnAggiungiFornitore_Click" />

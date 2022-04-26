@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Data;
 using adoNetWebSQlServer;
+using System.Data.SqlClient;
 
 namespace CarrelloASP_NET
 {
@@ -26,7 +27,7 @@ namespace CarrelloASP_NET
                 }
                 if (Session["page"] != null)
                 {
-                    if((int)Session["page"] == 1)
+                    if ((int)Session["page"] == 1)
                     {
                         caricaAggiungiFornitore();
                         return;
@@ -40,7 +41,17 @@ namespace CarrelloASP_NET
                     {
                         caricaInserimentoCategorie();
                         return;
-                    } 
+                    }
+                    if ((int)Session["page"] == 4)
+                    {
+                        caricaGestioneProdotti();
+                        return;
+                    }
+                    if ((int)Session["page"] == 5)
+                    {
+                        caricaModificaProdotto();
+                        return;
+                    }
                 }
                 caricaHome();
                 return;
@@ -160,12 +171,14 @@ namespace CarrelloASP_NET
             Session["page"] = null;
             Session["inModFornitore"] = null;
             Session["inModCategoria"] = null;
+            Session["inModProdotto"] = null;
             Response.Redirect("default.aspx");
         }
         protected void btnHome_Click(object sender, EventArgs e)
         {
             Session["inModFornitore"] = null;
             Session["inModCategoria"] = null;
+            Session["inModProdotto"] = null;
             caricaHome();
         }
         #endregion
@@ -174,6 +187,7 @@ namespace CarrelloASP_NET
         {
             Session["inModFornitore"] = null;
             Session["inModCategoria"] = null;
+            Session["inModProdotto"] = null;
             caricaAggiungiFornitore();
         }
         private void caricaAggiungiFornitore()
@@ -184,24 +198,9 @@ namespace CarrelloASP_NET
             DataRow modFornitore = new DataTable().NewRow();
             if (Session["inModFornitore"] != null)
             {
-                 modFornitore = dbConnection.eseguiQuery("select * from Fornitori where Id = " + Session["inModFornitore"], CommandType.Text).Rows[0];
+                modFornitore = dbConnection.eseguiQuery("select * from Fornitori where Id = " + Session["inModFornitore"], CommandType.Text).Rows[0];
             }
-            HtmlGenericControl formContainer = new HtmlGenericControl("div");
-            formContainer.Attributes.Add("class", "container py-5 h-100");
-            container.Controls.Add(formContainer);
-            HtmlGenericControl form = new HtmlGenericControl("div");
-            form.Attributes.Add("class", "row h-100 d-flex justify-content-center align-items-center");
-            formContainer.Controls.Add(form);
-            HtmlGenericControl formDiv = new HtmlGenericControl("div");
-            formDiv.Attributes.Add("class", "col-12 col-md-8 col-lg-6 col-xl-5");
-            form.Controls.Add(formDiv);
-            HtmlGenericControl formCard = new HtmlGenericControl("div");
-            formCard.Attributes.Add("class", "card shadow-2-strong");
-            formCard.Attributes.Add("style", "border-radius: 1rem");
-            formDiv.Controls.Add(formCard);
-            HtmlGenericControl formCardBody = new HtmlGenericControl("div");
-            formCardBody.Attributes.Add("class", "card-body px-4");
-            formCard.Controls.Add(formCardBody);
+            var formCardBody = creaStrutturaForm(container);
             HtmlGenericControl formTitle = new HtmlGenericControl("h3");
             formTitle.Attributes.Add("class", "card-title text-center my-4");
             formTitle.InnerText = "Aggiungi Fornitore";
@@ -317,7 +316,7 @@ namespace CarrelloASP_NET
             string sql = "select * from Accounts where Privilegi=1";
             if (Session["inModFornitore"] != null)
             {
-                
+
                 sql += $" or Id = {modFornitore["Account"]}";
             }
             foreach (
@@ -360,7 +359,7 @@ namespace CarrelloASP_NET
             };
             formOutline.Controls.Add(lblErrore);
         }
-        private bool controllaCampi()
+        private bool controllaCampiFornitore()
         {
             Label lblErrore = (Label)this.FindControl("lblErrore");
             if (((TextBox)this.FindControl("txtNomeFornitore")).Text != string.Empty)
@@ -404,7 +403,7 @@ namespace CarrelloASP_NET
         }
         protected void btnConfermaFornitore_Click(object sender, EventArgs e)
         {
-            if (controllaCampi())
+            if (controllaCampiFornitore())
             {
                 dbConnection = new adoNet();
                 System.Data.SqlClient.SqlParameterCollection parameters = dbConnection.cmd.Parameters;
@@ -425,7 +424,7 @@ namespace CarrelloASP_NET
                         )
                     )
                         ((Label)this.FindControl("lblErrore")).Text = "Errore nell'inserimento del fornitore";
-                        
+
                 }
                 else
                 {
@@ -446,7 +445,7 @@ namespace CarrelloASP_NET
                             CommandType.Text)
                         )
                     )
-                        ((Label)this.FindControl("lblErrore")).Text = "Errore nell'inserimento del fornitore";   
+                        ((Label)this.FindControl("lblErrore")).Text = "Errore nell'inserimento del fornitore";
                 }
                 Session["page"] = 0;
                 Session["inModFornitore"] = null;
@@ -520,7 +519,7 @@ namespace CarrelloASP_NET
                 buttonModifica.ID = "btnModifica_" + categoria["Id"].ToString();
                 div.Controls.Add(buttonModifica);
                 Button buttonElimina = new Button();
-                
+
                 if ((bool)categoria["Valido"])
                 {
                     buttonElimina.CssClass = "btn btn-outline-danger";
@@ -560,21 +559,7 @@ namespace CarrelloASP_NET
         private void caricaInserimentoCategorie()
         {
             container.Controls.Clear();
-            HtmlGenericControl formContainer = new HtmlGenericControl("div");
-            formContainer.Attributes.Add("class", "container py-5 h-100");
-            container.Controls.Add(formContainer);
-            HtmlGenericControl form = new HtmlGenericControl("div");
-            form.Attributes.Add("class", "row h-100 d-flex justify-content-center align-items-center");
-            formContainer.Controls.Add(form);
-            HtmlGenericControl formDiv = new HtmlGenericControl("div");
-            formDiv.Attributes.Add("class", "col-12 col-md-8 col-lg-6 col-xl-5");
-            form.Controls.Add(formDiv);
-            HtmlGenericControl formCard = new HtmlGenericControl("div");
-            formCard.Attributes.Add("class", "card shadow-2-strong rounded-2");
-            formDiv.Controls.Add(formCard);
-            HtmlGenericControl formCardBody = new HtmlGenericControl("div");
-            formCardBody.Attributes.Add("class", "card-body");
-            formCard.Controls.Add(formCardBody);
+            var formCardBody = creaStrutturaForm(container);
             HtmlGenericControl formTitle = new HtmlGenericControl("h3");
             formTitle.Attributes.Add("class", "card-title text-center");
             formTitle.InnerText = "Categoria";
@@ -626,7 +611,7 @@ namespace CarrelloASP_NET
                         @"insert into Categorie (Descrizione) values (@descrizione)",
                         CommandType.Text
                     );
-                }   
+                }
                 else
                 {
                     dbConnection.cmd.Parameters.AddWithValue("@id", (int)Session["inModCategoria"]);
@@ -654,5 +639,378 @@ namespace CarrelloASP_NET
             caricaGestioneCategorie();
         }
         #endregion
+        #region prodotti
+        protected void btnProdotti_Click(object sender, EventArgs e)
+        {
+            Session["page"] = 4;
+            caricaGestioneProdotti();
+        }
+        private void caricaGestioneProdotti()
+        {
+            container.Controls.Clear();
+            //genero la tabella con i prodotti
+            HtmlGenericControl table = new HtmlGenericControl("table");
+            table.Attributes.Add("class", "table table-striped table-hover");
+            container.Controls.Add(table);
+            HtmlGenericControl thead = new HtmlGenericControl("thead");
+            table.Controls.Add(thead);
+            HtmlGenericControl tr = new HtmlGenericControl("tr");
+            thead.Controls.Add(tr);
+            HtmlGenericControl th = new HtmlGenericControl("th");
+            th.InnerText = "Nome";
+            tr.Controls.Add(th);
+            th = new HtmlGenericControl("th");
+            th.InnerText = "Fornitore";
+            tr.Controls.Add(th);
+            th = new HtmlGenericControl("th");
+            th.InnerText = "Categoria";
+            tr.Controls.Add(th);
+            th = new HtmlGenericControl("th");
+            th.InnerText = "Prezzo";
+            tr.Controls.Add(th);
+            th = new HtmlGenericControl("th");
+            th.InnerText = "Immagine";
+            tr.Controls.Add(th);
+            th = new HtmlGenericControl("th");
+            th.InnerText = "Azioni";
+            tr.Controls.Add(th);
+            HtmlGenericControl tbody = new HtmlGenericControl("tbody");
+            table.Controls.Add(tbody);
+            dbConnection = new adoNet();
+            foreach (DataRow prodotto in dbConnection.eseguiQuery(
+                @"select p.Id, 
+                  p.NomeProdotto as NomeProdotto, 
+                  p.Prezzo as Prezzo, 
+                  p.Immagine as Immagine, 
+                  f.Descrizione as Fornitore, 
+                  c.Descrizione as Categoria,
+                  p.Valido as Valido
+                  from Prodotti as p inner join Categorie as c on p.Categoria = c.Id
+                                     inner join Fornitori as f on p.Fornitore = f.Id",
+                CommandType.Text
+            ).Rows)
+            {
+                tr = new HtmlGenericControl("tr");
+                tbody.Controls.Add(tr);
+                HtmlGenericControl td = new HtmlGenericControl("td");
+                td = new HtmlGenericControl("td");
+                td.InnerText = prodotto["NomeProdotto"].ToString();
+                tr.Controls.Add(td);
+                td = new HtmlGenericControl("td");
+                td.InnerText = prodotto["Fornitore"].ToString();
+                tr.Controls.Add(td);
+                td = new HtmlGenericControl("td");
+                td.InnerText = prodotto["Categoria"].ToString();
+                tr.Controls.Add(td);
+                td = new HtmlGenericControl("td");
+                td.InnerText = prodotto["Prezzo"].ToString();
+                tr.Controls.Add(td);
+                td = new HtmlGenericControl("td");
+                tr.Controls.Add(td);
+                Image img = new Image
+                {
+                    ImageUrl = prodotto["Immagine"].ToString(),
+                    CssClass = "img-thumbnail"
+                };
+                img.Attributes.Add("style", "height:100px");
+                td.Controls.Add(img);
+                td = new HtmlGenericControl("td");
+                tr.Controls.Add(td);
+                HtmlGenericControl btnGroup = new HtmlGenericControl("div");
+                btnGroup.Attributes.Add("class", "btn-group my-4");
+                btnGroup.Attributes.Add("style", "width:100%;");
+                td.Controls.Add(btnGroup);
+                Button btnModifica = new Button
+                {
+                    Text = "Modifica",
+                    CssClass = "btn btn-outline-primary"
+                };
+                btnModifica.Click += new EventHandler(this.btnModificaProdotto_Click);
+                btnModifica.ID = "btnModifica_" + prodotto["Id"].ToString();
+                btnGroup.Controls.Add(btnModifica);
+                td = new HtmlGenericControl("td");
+                tr.Controls.Add(td);
+                Button btnElimina = new Button
+                {
+                    CssClass = "btn btn-outline-danger"
+                };
+                if ((bool)prodotto["Valido"])
+                {
+                    btnElimina.Text = "Elimina";
+                }
+                else
+                {
+                    btnElimina.Text = "Riabilita";
+                }
+                btnElimina.Click += new EventHandler(this.btnEliminaProdotto_Click);
+                btnElimina.ID = "btnElimina_" + prodotto["Id"].ToString();
+                btnGroup.Controls.Add(btnElimina);
+            }
+        }
+        protected void btnModificaProdotto_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            string id = btn.ID.Split('_')[1];
+            Session["inModProdotto"] = id;
+            Session["page"] = 5;
+            caricaModificaProdotto();
+        }
+        protected void btnEliminaProdotto_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            string id = btn.ID.Split('_')[1];
+            dbConnection.cmd.Parameters.AddWithValue("@id", id);
+            dbConnection.eseguiNonQuery(
+                @"update Prodotti set Valido = 1 - Valido where Id = @id",
+                CommandType.Text
+            );
+            Session["page"] = 2;
+            Session["inModProdotto"] = null;
+            caricaGestioneProdotti();
+        }
+        private void caricaModificaProdotto()
+        {
+            container.Controls.Clear();
+            dbConnection = new adoNet();
+            DataRow prodotto = dbConnection.eseguiQuery(
+                $@"select *
+                   from Prodotti
+                  where Id = {Session["inModProdotto"]}",
+                CommandType.Text
+            ).Rows[0];
+            var formCardBody = creaStrutturaForm(container);
+            HtmlGenericControl formTitle = new HtmlGenericControl("h3");
+            formTitle.Attributes.Add("class", "card-title text-center my-4");
+            formTitle.InnerText = "Modifica prodotto";
+            formCardBody.Controls.Add(formTitle);
+            //nome prodotto
+            HtmlGenericControl formOutline = new HtmlGenericControl("div");
+            formOutline.Attributes.Add("class", "form-outline");
+            formCardBody.Controls.Add(formOutline);
+            HtmlGenericControl formLabel = new HtmlGenericControl("label");
+            formLabel.Attributes.Add("class", "form-label");
+            formLabel.InnerText = "Nome";
+            formOutline.Controls.Add(formLabel);
+            TextBox formTextInput = new TextBox
+            {
+                CssClass = "form-control",
+                ID = "txtNomeProdotto"
+            };
+            formTextInput.Text = prodotto["NomeProdotto"].ToString();
+            //immagine (solo visualizzazione)
+            formOutline = new HtmlGenericControl("div");
+            formOutline.Attributes.Add("class", "form-outline");
+            formCardBody.Controls.Add(formOutline);
+            formLabel = new HtmlGenericControl("label");
+            formLabel.Attributes.Add("class", "form-label");
+            formLabel.InnerText = "Immagine";
+            formOutline.Controls.Add(formLabel);
+            Image formImage = new Image
+            {
+                CssClass = "form-control img-thumbnail",
+                ID = "imgImmagine"
+            };
+            formImage.ImageUrl = Server.MapPath(prodotto["Immagine"].ToString());
+            formOutline.Controls.Add(formImage);
+            //categoria
+            formOutline.Controls.Add(formTextInput);
+            formOutline = new HtmlGenericControl("div");
+            formOutline.Attributes.Add("class", "form-outline");
+            formCardBody.Controls.Add(formOutline);
+            formLabel = new HtmlGenericControl("label");
+            formLabel.Attributes.Add("class", "form-label");
+            formLabel.InnerText = "Categoria";
+            formOutline.Controls.Add(formLabel);
+            DropDownList ddlCategoria = new DropDownList
+            {
+                CssClass = "form-control",
+                ID = "ddlCategoria"
+            };
+            ddlCategoria.Items.Add(new ListItem("", "0"));
+            dbConnection = new adoNet();
+            foreach (DataRow categoria in dbConnection.eseguiQuery(
+                @"select Id, Descrizione from Categorie where Valido = 1",
+                CommandType.Text
+            ).Rows)
+            {
+                ddlCategoria.Items.Add(new ListItem(categoria["Descrizione"].ToString(), categoria["Id"].ToString()));
+            }
+            ddlCategoria.SelectedValue = prodotto["Categoria"].ToString();
+            formOutline.Controls.Add(ddlCategoria);
+            //Fornitore
+            formOutline = new HtmlGenericControl("div");
+            formOutline.Attributes.Add("class", "form-outline");
+            formCardBody.Controls.Add(formOutline);
+            formLabel = new HtmlGenericControl("label");
+            formLabel.Attributes.Add("class", "form-label");
+            formLabel.InnerText = "Fornitore";
+            formOutline.Controls.Add(formLabel);
+            DropDownList ddlFornitore = new DropDownList
+            {
+                CssClass = "form-control",
+                ID = "ddlFornitore"
+            };
+            ddlFornitore.Items.Add(new ListItem("", "0"));
+            foreach (DataRow fornitore in dbConnection.eseguiQuery(
+                @"select Id, Descrizione from Fornitori where Valido = 1",
+                CommandType.Text
+            ).Rows)
+            {
+                ddlFornitore.Items.Add(new ListItem(fornitore["Descrizione"].ToString(), fornitore["Id"].ToString()));
+            }
+            ddlFornitore.SelectedValue = prodotto["Fornitore"].ToString();
+            ddlFornitore.Enabled = false;
+            formOutline.Controls.Add(ddlFornitore);
+            formOutline = new HtmlGenericControl("div");
+            formOutline.Attributes.Add("class", "form-outline");
+            formCardBody.Controls.Add(formOutline);
+            formLabel = new HtmlGenericControl("label");
+            formLabel.Attributes.Add("class", "form-label");
+            formLabel.InnerText = "Prezzo";
+            formOutline.Controls.Add(formLabel);
+            //prezzo
+            TextBox formTextInputPrezzo = new TextBox
+            {
+                CssClass = "form-control",
+                ID = "txtPrezzo"
+            };
+            formTextInputPrezzo.TextChanged += new EventHandler(txtPrezzo_TextChanged);
+            formTextInputPrezzo.Text = Convert.ToDecimal(prodotto["Prezzo"]).ToString("0.00");
+            formOutline.Controls.Add(formTextInputPrezzo);
+            formOutline = new HtmlGenericControl("div");
+            formOutline.Attributes.Add("class", "form-outline");
+            formCardBody.Controls.Add(formOutline);
+            formLabel = new HtmlGenericControl("label");
+            formLabel.Attributes.Add("class", "form-label");
+            formLabel.InnerText = "Descrizione";
+            formOutline.Controls.Add(formLabel);
+            //descrizione
+            TextBox formTextInputDescrizione = new TextBox
+            {
+                CssClass = "form-control",
+                ID = "txtDescrizione"
+            };
+            formTextInputDescrizione.TextMode = TextBoxMode.MultiLine;
+            formTextInputDescrizione.Text = prodotto["Descrizione"].ToString();
+            formOutline.Controls.Add(formTextInputDescrizione);
+            //bottone
+            HtmlGenericControl formButton = new HtmlGenericControl("div");
+            formButton.Attributes.Add("class", "form-button");
+            formCardBody.Controls.Add(formButton);
+            Button btnModifica = new Button
+            {
+                CssClass = "btn btn-primary mt-3",
+                ID = "btnModificaProdotto",
+                Text = "Modifica"
+            };
+            btnModifica.Click += new EventHandler(btnSubmitModificaProdotto_Click);
+            formButton.Controls.Add(btnModifica);
+            Label lblErrore = new Label
+            {
+                CssClass = "text-danger mt-3",
+                ID = "lblErrore"
+            };
+            formCardBody.Controls.Add(lblErrore);
+        }
+        protected void btnSubmitModificaProdotto_Click(object sender, EventArgs e)
+        {
+            if (controllaCampiProdotto())
+            {
+                dbConnection = new adoNet();
+                
+                dbConnection.cmd.Parameters.AddRange(
+                    new SqlParameter[]
+                    {
+                        new SqlParameter("@nome", ((TextBox)this.FindControl("txtNomeProdotto")).Text),
+                        new SqlParameter("@descrizione", ((TextBox)this.FindControl("txtDescrizione")).Text),
+                        new SqlParameter("@prezzo", Convert.ToDecimal(((TextBox)this.FindControl("txtPrezzo")).Text)),
+                        new SqlParameter("@categoria", ((DropDownList)this.FindControl("ddlCategoria")).SelectedValue),
+                        new SqlParameter("@id", Convert.ToInt32(Session["inModProdotto"]))
+                    });
+                dbConnection.eseguiNonQuery(
+                    @"update Prodotti set
+                        Nome = @nome,
+                        Descrizione = @descrizione,
+                        Prezzo = @prezzo,
+                        Categoria = @categoria
+                    where Id = @id",
+                    CommandType.Text
+                );
+                Session["inModProdotto"] = null;
+                Session["page"] = 4; 
+            }
+        }
+        private bool controllaCampiProdotto()
+        {
+            Label lblErrore = (Label)this.FindControl("lblErrore");
+            if (((TextBox)this.FindControl("txtNomeProdotto")).Text != string.Empty)
+            {
+                if (((DropDownList)this.FindControl("ddlCategoria")).SelectedValue != "0")
+                {
+                    if (((TextBox)this.FindControl("txtPrezzo")).Text != string.Empty)
+                    {
+                        if (((TextBox)this.FindControl("txtDescrizione")).Text != string.Empty)
+                        {
+                            return true;
+                        }
+                        else
+                            lblErrore.Text = "Inserire una descrizione";
+                    }
+                    else
+                        lblErrore.Text = "Inserire un prezzo";
+                }
+                else
+                    lblErrore.Text = "Selezionare una categoria";
+            }
+            else
+                lblErrore.Text = "Inserire il nome del prodotto";
+            return false;
+        }
+        protected void txtPrezzo_TextChanged(object sender, EventArgs e)
+        {
+            TextBox txtPrezzo = (TextBox)sender;
+            if (decimal.TryParse(txtPrezzo.Text.Replace(".", ","), out decimal prezzo) || txtPrezzo.Text == string.Empty)
+            {
+                txtPrezzo.Style.Remove("border-color");
+                txtPrezzo.Text = prezzo.ToString("0.00");
+                if (txtPrezzo.Text.Length > 0)
+                {
+                    if (txtPrezzo.Text.Contains(","))
+                    {
+                        txtPrezzo.Text = txtPrezzo.Text.Replace(",", ".");
+                    }
+                    if (!txtPrezzo.Text.Contains("."))
+                    {
+                        txtPrezzo.Text += ".00";
+                    }
+                }
+            }
+            else
+            {
+                txtPrezzo.Style.Add("border-color", "red");
+            }
+
+        }
+        #endregion
+        private HtmlGenericControl creaStrutturaForm(PlaceHolder container)
+        {
+            HtmlGenericControl formContainer = new HtmlGenericControl("div");
+            formContainer.Attributes.Add("class", "container py-5 h-100");
+            container.Controls.Add(formContainer);
+            HtmlGenericControl form = new HtmlGenericControl("div");
+            form.Attributes.Add("class", "row h-100 d-flex justify-content-center align-items-center");
+            formContainer.Controls.Add(form);
+            HtmlGenericControl formDiv = new HtmlGenericControl("div");
+            formDiv.Attributes.Add("class", "col-12 col-md-8 col-lg-6 col-xl-5");
+            form.Controls.Add(formDiv);
+            HtmlGenericControl formCard = new HtmlGenericControl("div");
+            formCard.Attributes.Add("class", "card shadow-2-strong");
+            formCard.Attributes.Add("style", "border-radius: 1rem");
+            formDiv.Controls.Add(formCard);
+            HtmlGenericControl formCardBody = new HtmlGenericControl("div");
+            formCardBody.Attributes.Add("class", "card-body px-4");
+            formCard.Controls.Add(formCardBody);
+            return formCardBody;
+        }
     }
 }
