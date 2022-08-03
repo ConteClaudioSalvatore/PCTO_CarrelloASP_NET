@@ -598,8 +598,8 @@ namespace CarrelloASP_NET
                             )} €</strong>";
                     mail.Priority = MailPriority.High;
                     System.Net.NetworkCredential credenziali = new System.Net.NetworkCredential();
-                    credenziali.UserName = "c.conte.1292@vallauri.edu";
-                    credenziali.Password = "Claudioc0@";
+                    credenziali.UserName = "<address>@<domain>";
+                    credenziali.Password = "<password>";
 
                     SmtpClient smtp = new SmtpClient();
                     smtp.Host = "smtp.gmail.com";
